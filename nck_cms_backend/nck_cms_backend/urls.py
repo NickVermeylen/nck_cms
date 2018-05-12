@@ -22,5 +22,5 @@ from .routers import router
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-    path('article/', TemplateView.as_view(template_name='index.html')),
+    path('customer/', TemplateView.as_view(template_name='index.html')),
 ]

@@ -14,31 +14,30 @@
   <div id="starting">
       <div class="container">
         <div class="row">
-          <h1>List of Articles
-          <button  type="button" class="btn btn-success" data-toggle="modal" data-target="#addArticleModal">ADD ARTICLE</button>
-          <button class="btn btn-info" v-on:click="addArticle()">do post</button>
+          <h1>List of Customers
+          <button  type="button" class="btn btn-success" data-toggle="modal" data-target="#addCustomerModal">ADD CUSTOMER</button>
           </h1>
-          <form v-on:submit.prevent="getArticles()">
-            <input class="form-group" type="text" v-model="query"/>
+          <form v-on:submit.prevent="getCustomers()">
+            <input class="form-group" v-on:keyup="getCustomers()" type="text" v-model="query"/>
             <button class="btn btn-info" type="submit">Search</button>
           </form>
           <table class="table">
             <thead>
               <tr>
                 <th scope="col">#</th>
-                <th scope="col">Heading</th>
-                <th scope="col">Body</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
                 <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="article in articles">
-                <th scope="row">${article.article_id}</th>
-                <td>${article.article_heading}</td>
-                <td>${article.article_body}</td>
+              <tr v-for="customer in customers">
+                <th scope="row">${customer.customer_id}</th>
+                <td>${customer.customer_name}</td>
+                <td>${customer.customer_description}</td>
                 <td>
-                  <button class="btn btn-info" v-on:click="getArticle(article.article_id)">Edit</button>
-                  <button class="btn btn-danger" v-on:click="deleteArticle(article.article_id)">Delete</button>
+                  <button class="btn btn-info" v-on:click="getCustomer(customer.customer_id)">Edit</button>
+                  <button class="btn btn-danger" v-on:click="deleteCustomer(customer.customer_id)">Delete</button>
                 </td>
               </tr>
             </tbody>
@@ -47,36 +46,72 @@
       </div>
       <div class="loading" v-if="loading===true">Loading&#8230;</div>
 
-      <!-- Add Article Modal -->
-          <div class="modal fade" id="addArticleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+      <!-- Add Customer Modal -->
+          <div class="modal fade" id="addCustomerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLongTitle">ADD ARTICLE</h5>
+                  <h5 class="modal-title" id="exampleModalLongTitle">ADD CUSTOMER</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                <form v-on:submit="addArticle()">
+                <form v-on:submit="addCustomer()">
                 <div class="modal-body">
                     <div class="form-group">
-                      <label for="article_heading">Article Heading</label>
+                      <label for="customer_name">Customer Name</label>
                       <input
                         type="text"
                         class="form-control"
-                        id="article_heading"
-                        placeholder="Enter Article Heading"
-                        v-model="newArticle.article_heading"
+                        id="customer_name"
+                        placeholder="Enter Customer Name"
+                        v-model="newCustomer.customer_name"
                         required="required" >
                     </div>
                     <div class="form-group">
-                      <label for="article_body">Article Body</label>
+                        <label for="customer_location_street">Customer Location</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="customer_location_street"
+                          placeholder="Enter Street Name"
+                          v-model="newCustomer.customer_location_street"
+                          required="required" >
+                          <input
+                          type="text"
+                          class="form-control"
+                          id="customer_location_houseNumber"
+                          placeholder="Enter House Number"
+                          v-model="newCustomer.customer_location_houseNumber"
+                          required="required" >
+                          <input
+                          type="text"
+                          class="form-control"
+                          id="customer_location_postalCode"
+                          placeholder="Enter Postal Code"
+                          v-model="newCustomer.customer_location_postalCode"
+                          required="required" >
+                          <input
+                          type="text"
+                          class="form-control"
+                          id="customer_location_municipality"
+                          placeholder="Enter Municipality"
+                          v-model="newCustomer.customer_location_municipality"
+                          required="required" >
+                          <input
+                          type="text"
+                          class="form-control"
+                          id="customer_location_extra"
+                          placeholder="Enter Additions (box, apt., etc..)"
+                          v-model="newCustomer.customer_location_extra">
+                      </div>
+                    <div class="form-group">
+                      <label for="customer_description">Customer Description</label>
                       <textarea
                         class="form-control"
-                        id="article_body"
-                        placeholder="Enter Article Body"
-                        v-model="newArticle.article_body"
-                        required="required"
+                        id="customer_description"
+                        placeholder="Enter Customer Description"
+                        v-model="newCustomer.customer_description"
                         rows="3"></textarea>
                     </div>
                 </div>
@@ -88,37 +123,73 @@
               </div>
             </div>
           </div>
-          <!-- End of article modal -->
-          <!-- Edit Article Modal -->
-          <div class="modal fade" id="editArticleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+          <!-- End of customer modal -->
+          <!-- Edit Customer Modal -->
+          <div class="modal fade" id="editCustomerModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLongTitle">EDIT ARTICLE</h5>
+                  <h5 class="modal-title" id="exampleModalLongTitle">EDIT CUSTOMER</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
                 </div>
-                <form v-on:submit="updateArticle()">
+                <form v-on:submit="updateCustomer()">
                 <div class="modal-body">
                     <div class="form-group">
-                      <label for="article_heading">Article Heading</label>
+                      <label for="customer_name">Customer Name</label>
                       <input
                         type="text"
                         class="form-control"
-                        id="article_heading"
-                        placeholder="Enter Article Heading"
-                        v-model="currentArticle.article_heading"
+                        id="customer_name"
+                        placeholder="Enter Customer Name"
+                        v-model="currentCustomer.customer_name"
                         required="required" >
                     </div>
                     <div class="form-group">
-                      <label for="article_body">Article Body</label>
+                        <label for="customer_location_street">Customer Location</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="customer_location_street"
+                          placeholder="Enter Street Name"
+                          v-model="currentCustomer.customer_location_street"
+                          required="required" >
+                          <input
+                          type="text"
+                          class="form-control"
+                          id="customer_location_houseNumber"
+                          placeholder="Enter House Number"
+                          v-model="currentCustomer.customer_location_houseNumber"
+                          required="required" >
+                          <input
+                          type="text"
+                          class="form-control"
+                          id="customer_location_postalCode"
+                          placeholder="Enter Postal Code"
+                          v-model="currentCustomer.customer_location_postalCode"
+                          required="required" >
+                          <input
+                          type="text"
+                          class="form-control"
+                          id="customer_location_municipality"
+                          placeholder="Enter Municipality"
+                          v-model="currentCustomer.customer_location_municipality"
+                          required="required" >
+                          <input
+                          type="text"
+                          class="form-control"
+                          id="customer_location_extra"
+                          placeholder="Enter Additions (box, apt., etc..)"
+                          v-model="currentCustomer.customer_location_extra">
+                      </div>
+                    <div class="form-group">
+                      <label for="customer_description">Customer Description</label>
                       <textarea
                         class="form-control"
-                        id="article_body"
-                        placeholder="Enter Article Body"
-                        v-model="currentArticle.article_body"
-                        required="required"
+                        id="customer_description"
+                        placeholder="Enter Customer Description"
+                        v-model="currentCustomer.customer_description"
                         rows="3"></textarea>
                     </div>
                 </div>
@@ -130,7 +201,7 @@
               </div>
             </div>
           </div>
-          <!-- End of edit article modal -->
+          <!-- End of edit customer modal -->
     </div>
 <!--bootrtap js files -->
  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -145,22 +216,28 @@
     el: '#starting',
     delimiters: ['${','}'],
     data: {
-    articles: [],
+    customers: [],
     loading: false,
-    currentArticle: {},
+    currentCustomer: {},
     message: null,
-    newArticle: { 'article_heading': null, 'article_body': null },
+    newCustomer: { 'customer_name': null,
+    'customer_location_street': null,
+    'customer_location_houseNumber': null,
+    'customer_location_municipality': null,
+    'customer_location_postalCode': null, 
+    'customer_location_extra': null, 
+    'customer_description': null },
     query: '',
   },
   mounted: function() {
-  created: this.getArticles(this.query);
+  created: this.getCustomers(this.query);
 },
 methods: {
-    getArticles: function () {
+    getCustomers: function () {
         this.loading = true;
-        this.$http.get('/api/article/?q='+this.query)
+        this.$http.get('/api/customer/?q='+this.query)
             .then((response) => {
-                this.articles = response.data;
+                this.customers = response.data;
                 this.loading = false;
             })
             .catch((err) => {
@@ -168,13 +245,13 @@ methods: {
                 console.log(err);
             })
     },
-    getArticle: function (id) {
+    getCustomer: function (id) {
       console.log(id)
         this.loading = true;
-        this.$http.get('/api/article/'+id+'/')
+        this.$http.get('/api/customer/'+id+'/')
             .then((response) => {
-                this.currentArticle = response.data;
-                $("#editArticleModal").modal('show');
+                this.currentCustomer = response.data;
+                $("#editCustomerModal").modal('show');
                 this.loading = false;
             })
             .catch((err) => {
@@ -182,37 +259,37 @@ methods: {
                 console.log(err);
             })
     },
-    addArticle: function () {
+    addCustomer: function () {
         this.loading = true;
-        this.$http.post('/api/article/', this.newArticle)
+        this.$http.post('/api/customer/', this.newCustomer)
             .then((response) => {
                 this.loading = false;
-                this.getArticles();
+                this.getCustomers();
             })
             .catch((err) => {
                 this.loading = false;
                 console.log(err);
             })
     },
-    updateArticle: function () {
+    updateCustomer: function () {
         this.loading = true;
-        this.$http.put('/api/article/'+this.currentArticle.article_id+'/', this.currentArticle)
+        this.$http.put('/api/customer/'+this.currentCustomer.customer_id+'/', this.currentCustomer)
             .then((response) => {
                 this.loading = false;
-                this.currentArticle = response.data;
-                this.getArticles();
+                this.currentCustomer = response.data;
+                this.getCustomer();
             })
             .catch((err) => {
                 this.loading = false;
                 console.log(err);
             })
     },
-    deleteArticle: function (id) {
+    deleteCustomer: function (id) {
         this.loading = true;
-        this.$http.delete('/api/article/'+id+'/')
+        this.$http.delete('/api/customer/'+id+'/')
             .then((response) => {
                 this.loading = false;
-                this.getArticles();
+                this.getCustomers();
             })
             .catch((err) => {
                 this.loading = false;
